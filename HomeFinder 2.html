@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1565C0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="HOME FINDER">
+<link rel="manifest" href="manifest.json">
+<title>HOME FINDER</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4ff;--bg2:#ffffff;--bg3:#e8eeff;--card:#ffffff;--card2:#eef2ff;
+  --blue:#1565C0;--blue2:#1976D2;--blue3:#2196F3;--blue4:#42A5F5;--bluelt:#E3F2FD;--bluedim:rgba(21,101,192,0.1);
+  --w:#ffffff;--gr:#6b7a99;--gr2:#9aa5be;--bdr:rgba(21,101,192,0.12);--bdrb:rgba(21,101,192,0.3);
+  --danger:#e53935;--success:#2e7d32;--warn:#f57c00;--tx:#1a237e;--tx2:#37474f;--shadow:0 2px 12px rgba(21,101,192,0.1)
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Vazirmatn',Tahoma,sans-serif;background:var(--bg);color:var(--tx);direction:rtl}
+.screen{position:fixed;inset:0;overflow-y:auto;background:var(--bg);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.screen.active{transform:translateX(0)}
+.screen.behind{transform:translateX(-30%)}
+.topbar{display:flex;align-items:center;padding:14px 16px;background:var(--blue);border-bottom:none;position:sticky;top:0;z-index:50;gap:12px;box-shadow:0 2px 8px rgba(21,101,192,0.3)}
+.topbar-back{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);border-radius:10px;border:1px solid rgba(255,255,255,0.3);cursor:pointer;font-size:18px;flex-shrink:0;color:white}
+.topbar h2{font-size:16px;font-weight:700;color:white;flex:1}
+.topbar-act{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);border-radius:10px;border:1px solid rgba(255,255,255,0.3);cursor:pointer;font-size:16px;flex-shrink:0}
+#screen-home{display:flex;flex-direction:column}
+.hero{padding:32px 24px 24px;background:linear-gradient(160deg,var(--blue) 0%,var(--blue3) 100%);display:flex;flex-direction:column;align-items:center;text-align:center}
+.logo-wrap{width:90px;height:90px;background:white;border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.logo-wrap img{width:72px;height:72px;object-fit:contain}
+.home-title{font-size:24px;font-weight:800;letter-spacing:2px;color:white}
+.home-title span{color:#90CAF9}
+.home-sub{font-size:12px;color:rgba(255,255,255,0.75);margin-top:6px;line-height:1.6}
+.stats{display:flex;gap:10px;margin:16px 16px 0}
+.stat{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
+.stat-n{font-size:20px;font-weight:800;color:var(--blue);display:block}
+.stat-l{font-size:10px;color:var(--gr);margin-top:2px;display:block}
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px 10px}
+.hbtn{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:20px 14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.hbtn:active{border-color:var(--blue);transform:scale(.97);background:var(--bluelt)}
+.hbtn.feat{grid-column:span 2;flex-direction:row;align-items:center;padding:18px;background:linear-gradient(135deg,var(--blue),var(--blue3));border:none}
+.hbtn.feat .bi{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.3)}
+.hbtn.feat .bl{color:white}
+.hbtn.feat .bs{color:rgba(255,255,255,0.75)}
+.hbtn.feat .bi{font-size:28px}
+.bi{font-size:24px;width:46px;height:46px;background:var(--bluelt);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid var(--bdr)}
+.bl{font-size:13px;font-weight:700;color:var(--tx)}
+.bs{font-size:11px;color:var(--gr);margin-top:1px}
+/* Credit & History same row */
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 24px}
+.credit{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;box-shadow:var(--shadow)}
+.cav{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.cn{font-size:12px;font-weight:700;color:var(--tx)}
+.cp{font-size:11px;color:var(--blue);margin-top:1px;direction:ltr}
+.cr{font-size:10px;color:var(--gr)}
+.hist-home-btn{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;box-shadow:var(--shadow)}
+.hist-home-btn:active{background:var(--bluelt);border-color:var(--blue)}
+.content{padding:14px;padding-bottom:80px}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.ctitle{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:6px}
+.fg{display:grid;gap:10px}
+.fg.c2{grid-template-columns:1fr 1fr}
+.fg.c3{grid-template-columns:1fr 1fr 1fr}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi label{font-size:10px;font-weight:600;color:var(--gr);text-transform:uppercase;letter-spacing:.5px}
+.fi input,.fi textarea,.fi select{background:var(--bg3);border:1.5px solid var(--bdr);border-radius:10px;padding:10px 12px;color:var(--tx);font-family:'Vazirmatn',Tahoma,sans-serif;font-size:13px;direction:rtl;width:100%;transition:border-color .2s;-webkit-appearance:none}
+.fi input:focus,.fi textarea:focus,.fi select:focus{outline:none;border-color:var(--blue);background:white}
+.fi textarea{resize:vertical;min-height:70px}
+.checks{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--bg3);border-radius:10px;border:1.5px solid var(--bdr)}
+.chip{display:flex;align-items:center;gap:5px;background:white;border:1.5px solid var(--bdr);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;color:var(--tx2)}
+.chip.on{background:var(--bluedim);border-color:var(--blue);color:var(--blue)}
+.chip input{display:none}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.pthumb{aspect-ratio:1;background:var(--bg3);border-radius:10px;border:1.5px solid var(--bdr);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.pthumb img{width:100%;height:100%;object-fit:cover}
+.pdel{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.5);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;color:white}
+.padd{aspect-ratio:1;background:var(--bg3);border-radius:10px;border:2px dashed var(--bdr);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:var(--gr2);gap:3px}
+.padd span{font-size:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 16px;border-radius:12px;border:none;font-family:'Vazirmatn',Tahoma,sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn:active{transform:scale(.96)}
+.bb{background:var(--blue);color:white}
+.bd{background:rgba(229,57,53,.1);color:var(--danger);border:1.5px solid rgba(229,57,53,.3)}
+.bsg{background:rgba(46,125,50,.1);color:var(--success);border:1.5px solid rgba(46,125,50,.3)}
+.bg{background:var(--bg3);color:var(--tx2);border:1.5px solid var(--bdr)}
+.bw{width:100%}
+.brow{display:flex;gap:10px;margin-top:10px}
+.fc{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow)}
+.fc:active{border-color:var(--blue);background:var(--bluelt)}
+.fthumb{width:58px;height:58px;border-radius:10px;background:var(--bg3);border:1.5px solid var(--bdr);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
+.fthumb img{width:100%;height:100%;object-fit:cover}
+.finfo{flex:1;min-width:0}
+.fcrow{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
+.bb2{background:var(--bluedim);color:var(--blue);border:1px solid var(--bdrb)}
+.bg2{background:var(--bg3);color:var(--gr);border:1px solid var(--bdr)}
+.faddr{font-size:12px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
+.fmetas{display:flex;gap:8px;flex-wrap:wrap}
+.fmi{font-size:11px;color:var(--gr)}
+.fmi strong{color:var(--blue)}
+.rb{margin-bottom:18px}
+.rh{background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:12px 12px 0 0;padding:11px 14px;font-size:13px;font-weight:700;color:white;display:flex;align-items:center;justify-content:space-between}
+.ctw{overflow-x:auto;border-radius:0 0 12px 12px;border:1.5px solid var(--bdr);border-top:none}
+.ct{width:100%;border-collapse:collapse;min-width:380px}
+.ct th{background:var(--bg3);color:var(--blue);padding:8px 6px;font-size:11px;font-weight:700;text-align:center;border-bottom:1.5px solid var(--bdr)}
+.ct td{padding:1px 3px;border-bottom:1px solid var(--bdr);text-align:center;background:white}
+.ct tr:last-child td{border-bottom:none}
+.ct tr:nth-child(even) td{background:var(--bg3)}
+.ct td input{background:transparent;border:none;color:var(--tx);font-family:'Vazirmatn',Tahoma,sans-serif;font-size:12px;text-align:center;width:100%;padding:8px 3px;direction:rtl}
+.ct td input:focus{outline:none;background:var(--bluelt);border-radius:5px}
+.rn{font-size:11px;color:var(--gr2);width:24px}
+.hi{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:13px;margin-bottom:10px;border-right:3px solid var(--danger);box-shadow:var(--shadow)}
+.hi.sold{border-right-color:var(--success)}
+.htop{display:flex;justify-content:space-between;margin-bottom:5px}
+.hcode{font-size:13px;font-weight:700;color:var(--tx)}
+.hdate{font-size:11px;color:var(--gr)}
+.haddr{font-size:12px;color:var(--tx2);margin-bottom:5px}
+.hreason{font-size:12px;color:var(--gr)}
+.hreason strong{color:var(--warn)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--blue);color:white;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;box-shadow:0 4px 20px rgba(21,101,192,0.4)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end}
+.modal-ov.open{display:flex}
+.modal{background:white;width:100%;border-radius:20px 20px 0 0;padding:18px 16px 36px;border-top:2px solid var(--bdr);max-height:85vh;overflow-y:auto}
+.mhandle{width:36px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 14px}
+.mtitle{font-size:15px;font-weight:700;color:var(--tx);text-align:center;margin-bottom:14px}
+.empty{text-align:center;padding:60px 20px}
+.empty-icon{font-size:50px;margin-bottom:12px}
+.empty h3{font-size:15px;font-weight:700;color:var(--tx2);margin-bottom:5px}
+.empty p{font-size:12px;color:var(--gr)}
+.sbar{display:flex;align-items:center;background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:10px 13px;gap:8px;margin-bottom:12px;box-shadow:var(--shadow)}
+.sbar input{background:transparent;border:none;color:var(--tx);font-family:'Vazirmatn',Tahoma,sans-serif;font-size:13px;flex:1;direction:rtl}
+.sbar input:focus{outline:none}
+.fab{position:fixed;bottom:22px;left:18px;width:50px;height:50px;background:var(--blue);border-radius:50%;border:none;color:white;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(21,101,192,0.4);z-index:40}
+.fab:active{transform:scale(.9)}
+.dr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:13px}
+.dr:last-child{border-bottom:none}
+.dl{color:var(--gr)}
+.dv{color:var(--tx2);font-weight:600;text-align:left;max-width:60%}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="hero">
+    <div class="logo-wrap">
+      <svg width="72" height="72" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Blue background -->
+        <rect width="200" height="200" rx="40" fill="#2196F3"/>
+        <!-- Chimney -->
+        <rect x="128" y="38" width="18" height="32" rx="3" fill="white"/>
+        <!-- Roof (thick lines, no fill, rounded) -->
+        <path d="M18 95 L100 28 L182 95" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- 2x2 Window grid -->
+        <rect x="72" y="100" width="22" height="22" rx="5" fill="white"/>
+        <rect x="100" y="100" width="22" height="22" rx="5" fill="white"/>
+        <rect x="72" y="126" width="22" height="22" rx="5" fill="white"/>
+        <rect x="100" y="126" width="22" height="22" rx="5" fill="white"/>
+        <!-- Swoosh curve -->
+        <path d="M15 168 Q60 145 105 158 Q145 168 185 150" stroke="white" stroke-width="9" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="home-title">HOME <span>FINDER</span></div>
+    <div class="home-sub">به دفترچه هوشمند شما خوش آمدید<br>مدیریت فایل‌ها و مشتریان در یک جا</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><span class="stat-n" id="st-f">۰</span><span class="stat-l">فایل ملک</span></div>
+    <div class="stat"><span class="stat-n" id="st-c">۰</span><span class="stat-l">مشتری</span></div>
+    <div class="stat"><span class="stat-n" id="st-h">۰</span><span class="stat-l">تاریخچه</span></div>
+  </div>
+  <div class="hgrid">
+    <div class="hbtn feat" onclick="goTo('screen-add')">
+      <div class="bi">➕</div>
+      <div><div class="bl">ثبت فایل جدید</div><div class="bs">افزودن ملک جدید</div></div>
+    </div>
+    <div class="hbtn" onclick="goTo('screen-files')">
+      <div class="bi">🏠</div>
+      <div class="bl">فایل‌های موجود</div>
+      <div class="bs">مشاهده همه</div>
+    </div>
+    <div class="hbtn" onclick="goTo('screen-customers')">
+      <div class="bi">👥</div>
+      <div class="bl">مشتریان</div>
+      <div class="bs">لیست خریداران</div>
+    </div>
+  </div>
+  <!-- Credit + History same size row -->
+  <div class="bottom-row">
+    <div class="credit">
+      <div class="cav">👤</div>
+      <div>
+        <div class="cr">سازنده · مشاور شما</div>
+        <div class="cn">سپهر نجار</div>
+        <div class="cp">09201102982</div>
+      </div>
+    </div>
+    <div class="hist-home-btn" onclick="goTo('screen-history')">
+      <div class="bi">📋</div>
+      <div class="bl">تاریخچه</div>
+      <div class="bs">فایل‌های حذف‌شده</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD FILE -->
+<div class="screen" id="screen-add">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">←</div>
+    <h2 id="add-title">ثبت فایل جدید</h2>
+    <div style="width:36px"></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="ctitle">📷 تصاویر ملک</div>
+      <div class="pgrid" id="pgrid">
+        <div class="padd" onclick="document.getElementById('pinput').click()"><span>＋</span><span>افزودن</span></div>
+      </div>
+      <input type="file" id="pinput" accept="image/*" multiple style="display:none" onchange="handlePhotos(this)">
+    </div>
+    <div class="card">
+      <div class="ctitle">📋 اطلاعات اصلی</div>
+      <div class="fg c2">
+        <div class="fi"><label>کد فایل</label><input id="f-code" placeholder="A001"></div>
+        <div class="fi"><label>تاریخ ثبت</label><input id="f-date" placeholder="۱۴۰۳/..."></div>
+      </div>
+      <div class="fg" style="margin-top:10px">
+        <div class="fi"><label>نوع ملک</label>
+          <select id="f-type"><option value="">انتخاب کنید</option><option>آپارتمان</option><option>ویلا</option><option>زمین</option><option>مغازه</option><option>دفتر</option></select>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:10px">
+        <div class="fi"><label>آدرس</label><textarea id="f-address" rows="2" placeholder="آدرس کامل..."></textarea></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle">📐 مشخصات</div>
+      <div class="fg c3">
+        <div class="fi"><label>متراژ</label><input type="number" id="f-area" placeholder="۸۵"></div>
+        <div class="fi"><label>سن بنا</label><input type="number" id="f-age" placeholder="۵"></div>
+        <div class="fi"><label>خواب</label><input type="number" id="f-rooms" placeholder="۲"></div>
+      </div>
+      <div class="fg c2" style="margin-top:10px">
+        <div class="fi"><label>طبقه / واحد</label><input id="f-floor" placeholder="۳ / ۸"></div>
+        <div class="fi"><label>نوع سند</label><input id="f-doc" placeholder="تک‌برگ"></div>
+      </div>
+      <div class="fg c2" style="margin-top:10px">
+        <div class="fi"><label>قیمت کل</label><input id="f-price" placeholder="۲ میلیارد"></div>
+        <div class="fi"><label>قیمت متری</label><input id="f-ppm" placeholder="اختیاری"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle">🏠 امکانات</div>
+      <div class="checks">
+        <label class="chip" onclick="toggleChip(this)"><input type="checkbox" id="f-elev"> آسانسور</label>
+        <label class="chip" onclick="toggleChip(this)"><input type="checkbox" id="f-stor"> انباری</label>
+        <label class="chip" onclick="toggleChip(this)"><input type="checkbox" id="f-park"> پارکینگ</label>
+        <label class="chip" onclick="toggleChip(this)"><input type="checkbox" id="f-balc"> تراس/بالکن</label>
+      </div>
+      <div class="fg c2" style="margin-top:10px">
+        <div class="fi"><label>نوع پارکینگ</label>
+          <select id="f-pt"><option value="">-</option><option>شخصی</option><option>مشاع</option><option>ندارد</option></select>
+        </div>
+        <div class="fi"><label>جهت</label>
+          <select id="f-dir"><option value="">-</option><option>شمالی</option><option>جنوبی</option><option>شرقی</option><option>غربی</option><option>شمالی-جنوبی</option></select>
+        </div>
+      </div>
+      <div class="fg c2" style="margin-top:10px">
+        <div class="fi"><label>سرمایش</label><input id="f-cool" placeholder="کولر/اسپلیت"></div>
+        <div class="fi"><label>گرمایش</label><input id="f-heat" placeholder="پکیج/شوفاژ"></div>
+      </div>
+      <div class="fg c2" style="margin-top:10px">
+        <div class="fi"><label>مستاجر</label><select id="f-ten"><option value="">-</option><option>خیر</option><option>بله</option></select></div>
+        <div class="fi"><label>اجاره ماهانه</label><input id="f-rent" placeholder="اختیاری"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle">👤 اطلاعات مالک</div>
+      <div class="fi"><label>نام مالک</label><input id="f-owner" placeholder="نام و نام خانوادگی"></div>
+      <div class="fg c2" style="margin-top:10px">
+        <div class="fi"><label>تلفن اول</label><input type="tel" id="f-ph1" placeholder="09..."></div>
+        <div class="fi"><label>تلفن دوم</label><input type="tel" id="f-ph2" placeholder="09..."></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle">📝 مزایا / معایب</div>
+      <div class="fi"><textarea id="f-notes" rows="4" placeholder="هر نکته مهم..."></textarea></div>
+    </div>
+    <div class="brow">
+      <button class="btn bb bw" onclick="saveFile()">💾 ذخیره فایل</button>
+      <button class="btn bg" onclick="clearForm()" style="width:48px;flex-shrink:0">🗑️</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILES LIST -->
+<div class="screen" id="screen-files">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">←</div>
+    <h2>فایل‌های موجود</h2>
+    <div style="width:36px"></div>
+  </div>
+  <div class="content">
+    <div class="sbar"><span>🔍</span><input placeholder="جستجو..." oninput="searchFiles(this.value)"></div>
+    <div id="flist"></div>
+  </div>
+  <button class="fab" onclick="goTo('screen-add')">＋</button>
+</div>
+
+<!-- FILE DETAIL -->
+<div class="screen" id="screen-detail">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">←</div>
+    <h2 id="dtitle">جزئیات فایل</h2>
+    <div class="topbar-act" onclick="editCurrent()">✏️</div>
+  </div>
+  <div class="content" id="dcontent"></div>
+</div>
+
+<!-- CUSTOMERS -->
+<div class="screen" id="screen-customers">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">←</div>
+    <h2>مشتریان</h2>
+    <div class="topbar-act" onclick="saveCustomers()">💾</div>
+  </div>
+  <div class="content">
+    <div class="rb"><div class="rh"><span>📐 تا ۷۰ متر</span></div><div class="ctw"><table class="ct" id="t70"></table></div></div>
+    <div class="rb"><div class="rh"><span>📐 ۸۰ تا ۱۲۰ متر</span></div><div class="ctw"><table class="ct" id="t120"></table></div></div>
+    <div class="rb"><div class="rh"><span>📐 ۱۳۰ متر به بالا</span></div><div class="ctw"><table class="ct" id="t130"></table></div></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="screen-history">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">←</div>
+    <h2>تاریخچه</h2>
+    <div style="width:36px"></div>
+  </div>
+  <div class="content" id="hcontent"></div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-ov" id="dmodal">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mtitle">دلیل حذف فایل</div>
+    <div class="fg" style="margin-bottom:12px">
+      <div class="fi"><label>دلیل حذف</label>
+        <select id="dreason">
+          <option value="معامله شد">معامله انجام شد ✅</option>
+          <option value="توسط مالک فروخته شد">توسط خود مالک فروخته شد</option>
+          <option value="فایل منقضی شد">فایل منقضی/قدیمی شد</option>
+          <option value="اشتباه ثبت شد">اشتباه ثبت شده بود</option>
+          <option value="سایر">سایر</option>
+        </select>
+      </div>
+      <div class="fi" style="margin-top:10px"><label>توضیح اضافی (اختیاری)</label><input id="dnote" placeholder="توضیح بیشتر..."></div>
+    </div>
+    <div class="brow">
+      <button class="btn bd bw" onclick="confirmDelete()">🗑️ حذف شود</button>
+      <button class="btn bg bw" onclick="closeDM()">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let files=JSON.parse(localStorage.getItem('hf_f')||'[]');
+let custs=JSON.parse(localStorage.getItem('hf_c')||'{"r70":[],"r120":[],"r130":[]}');
+let hist=JSON.parse(localStorage.getItem('hf_h')||'[]');
+let photos=[];let editId=null;let delId=null;let stack=['screen-home'];let sq='';
+function goTo(id){const cur=stack[stack.length-1];document.getElementById(cur).classList.remove('active');document.getElementById(cur).classList.add('behind');document.getElementById(id).classList.add('active');document.getElementById(id).classList.remove('behind');stack.push(id);if(id==='screen-files')renderFiles();if(id==='screen-customers')renderCusts();if(id==='screen-history')renderHist();if(id==='screen-home')updateStats();}
+function goBack(){if(stack.length<=1)return;const cur=stack.pop();const prev=stack[stack.length-1];document.getElementById(cur).classList.remove('active');document.getElementById(prev).classList.remove('behind');document.getElementById(prev).classList.add('active');if(prev==='screen-home')updateStats();if(prev==='screen-files')renderFiles();}
+function pn(n){return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);}
+function updateStats(){const tc=Object.values(custs).flat().filter(c=>c.name).length;document.getElementById('st-f').textContent=pn(files.length);document.getElementById('st-c').textContent=pn(tc);document.getElementById('st-h').textContent=pn(hist.length);}
+function handlePhotos(inp){Array.from(inp.files).forEach(f=>{const r=new FileReader();r.onload=e=>{photos.push(e.target.result);renderPG();};r.readAsDataURL(f);});inp.value='';}
+function renderPG(){document.getElementById('pgrid').innerHTML=photos.map((s,i)=>`<div class="pthumb"><img src="${s}"><div class="pdel" onclick="rmPhoto(${i})">✕</div></div>`).join('')+`<div class="padd" onclick="document.getElementById('pinput').click()"><span>＋</span><span>افزودن</span></div>`;}
+function rmPhoto(i){photos.splice(i,1);renderPG();}
+function toggleChip(l){setTimeout(()=>{const c=l.querySelector('input');l.classList.toggle('on',c.checked);},0);}
+function g(id){return document.getElementById(id).value;}
+function s(id,v){document.getElementById(id).value=v||'';}
+function saveFile(){const code=g('f-code').trim(),addr=g('f-address').trim();if(!code||!addr){showToast('کد فایل و آدرس الزامی است ❌');return;}const f={id:editId||Date.now(),code,date:g('f-date'),type:g('f-type'),address:addr,area:g('f-area'),age:g('f-age'),rooms:g('f-rooms'),floor:g('f-floor'),doc:g('f-doc'),price:g('f-price'),ppm:g('f-ppm'),elev:document.getElementById('f-elev').checked,stor:document.getElementById('f-stor').checked,park:document.getElementById('f-park').checked,balc:document.getElementById('f-balc').checked,pt:g('f-pt'),dir:g('f-dir'),cool:g('f-cool'),heat:g('f-heat'),ten:g('f-ten'),rent:g('f-rent'),owner:g('f-owner'),ph1:g('f-ph1'),ph2:g('f-ph2'),notes:g('f-notes'),photos:[...photos]};if(editId){const i=files.findIndex(x=>x.id===editId);if(i!==-1)files[i]=f;editId=null;}else files.unshift(f);localStorage.setItem('hf_f',JSON.stringify(files));showToast('فایل ذخیره شد ✅');clearForm();goBack();}
+function clearForm(){['f-code','f-date','f-address','f-area','f-age','f-rooms','f-floor','f-doc','f-price','f-ppm','f-cool','f-heat','f-rent','f-owner','f-ph1','f-ph2','f-notes'].forEach(id=>s(id,''));['f-type','f-pt','f-dir','f-ten'].forEach(id=>document.getElementById(id).selectedIndex=0);document.querySelectorAll('.chip').forEach(c=>{c.classList.remove('on');c.querySelector('input').checked=false;});photos=[];renderPG();editId=null;document.getElementById('add-title').textContent='ثبت فایل جدید';}
+function searchFiles(q){sq=q;renderFiles();}
+function renderFiles(){const c=document.getElementById('flist');let list=sq?files.filter(f=>f.code.toLowerCase().includes(sq.toLowerCase())||f.address.includes(sq)||(f.owner||'').includes(sq)):files;if(!list.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🏚️</div><h3>فایلی پیدا نشد</h3><p>از دکمه + فایل جدید ثبت کنید</p></div>`;return;}c.innerHTML=list.map(f=>`<div class="fc" onclick="showDetail(${f.id})"><div class="fthumb">${f.photos&&f.photos[0]?`<img src="${f.photos[0]}">`:'🏠'}</div><div class="finfo"><div class="fcrow"><span class="badge bb2">${f.code}</span>${f.type?`<span class="badge bg2">${f.type}</span>`:''}</div><div class="faddr">📍 ${f.address}</div><div class="fmetas">${f.area?`<span class="fmi">📐 <strong>${f.area}</strong>م²</span>`:''}${f.rooms?`<span class="fmi">🛏 <strong>${f.rooms}</strong></span>`:''}${f.price?`<span class="fmi">💰 ${f.price}</span>`:''}</div></div></div>`).join('');}
+function showDetail(id){const f=files.find(x=>x.id===id);if(!f)return;delId=id;document.getElementById('dtitle').textContent=`فایل ${f.code}`;const am=[f.elev&&'آسانسور',f.stor&&'انباری',f.park&&'پارکینگ',f.balc&&'تراس'].filter(Boolean).join('، ')||'—';function dr(l,v){return v?`<div class="dr"><span class="dl">${l}</span><span class="dv">${v}</span></div>`:'';}document.getElementById('dcontent').innerHTML=`${f.photos&&f.photos.length?`<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px">${f.photos.map(s=>`<img src="${s}" style="width:95px;height:95px;object-fit:cover;border-radius:10px;flex-shrink:0;border:1.5px solid var(--bdr)">`).join('')}</div>`:''}<div class="card"><div class="ctitle">📋 اطلاعات اصلی</div>${dr('نوع',f.type)}${dr('تاریخ',f.date)}${dr('آدرس',f.address)}</div><div class="card"><div class="ctitle">📐 مشخصات</div>${dr('متراژ',f.area?f.area+'م²':'')}${dr('سن بنا',f.age?f.age+' سال':'')}${dr('خواب',f.rooms)}${dr('طبقه/واحد',f.floor)}${dr('سند',f.doc)}${dr('قیمت',f.price)}${dr('قیمت متری',f.ppm)}</div><div class="card"><div class="ctitle">🏠 امکانات</div>${dr('امکانات',am)}${dr('پارکینگ',f.pt)}${dr('جهت',f.dir)}${dr('سرمایش',f.cool)}${dr('گرمایش',f.heat)}${dr('مستاجر',f.ten)}${dr('اجاره',f.rent)}</div><div class="card"><div class="ctitle">👤 مالک</div>${dr('نام',f.owner)}${dr('تلفن ۱',f.ph1)}${dr('تلفن ۲',f.ph2)}</div>${f.notes?`<div class="card"><div class="ctitle">📝 مزایا/معایب</div><p style="font-size:13px;line-height:1.8;color:var(--tx2)">${f.notes}</p></div>`:''}<div class="brow"><button class="btn bb bw" onclick="editCurrent()">✏️ ویرایش</button><button class="btn bd bw" onclick="document.getElementById('dmodal').classList.add('open')">🗑️ حذف</button></div>`;goTo('screen-detail');}
+function editCurrent(){const f=files.find(x=>x.id===delId);if(!f)return;editId=f.id;document.getElementById('add-title').textContent='ویرایش فایل';s('f-code',f.code);s('f-date',f.date);s('f-address',f.address);document.getElementById('f-type').value=f.type||'';s('f-area',f.area);s('f-age',f.age);s('f-rooms',f.rooms);s('f-floor',f.floor);s('f-doc',f.doc);s('f-price',f.price);s('f-ppm',f.ppm);document.getElementById('f-pt').value=f.pt||'';document.getElementById('f-dir').value=f.dir||'';document.getElementById('f-ten').value=f.ten||'';s('f-cool',f.cool);s('f-heat',f.heat);s('f-rent',f.rent);s('f-owner',f.owner);s('f-ph1',f.ph1);s('f-ph2',f.ph2);s('f-notes',f.notes);[['f-elev',f.elev],['f-stor',f.stor],['f-park',f.park],['f-balc',f.balc]].forEach(([id,v])=>{const cb=document.getElementById(id);cb.checked=!!v;cb.closest('.chip').classList.toggle('on',!!v);});photos=f.photos?[...f.photos]:[];renderPG();goTo('screen-add');}
+function closeDM(){document.getElementById('dmodal').classList.remove('open');}
+function confirmDelete(){const f=files.find(x=>x.id===delId);if(!f)return;const reason=g('dreason'),note=g('dnote');hist.unshift({id:f.id,code:f.code,address:f.address,type:f.type,date:f.date,price:f.price,deletedAt:new Date().toLocaleDateString('fa-IR'),reason,note,isSold:reason.includes('معامله')||reason.includes('فروخته')});files=files.filter(x=>x.id!==delId);localStorage.setItem('hf_f',JSON.stringify(files));localStorage.setItem('hf_h',JSON.stringify(hist));closeDM();showToast('فایل حذف شد 🗑️');s('dnote','');stack=['screen-home'];document.querySelectorAll('.screen').forEach(sc=>{sc.classList.remove('active','behind');});document.getElementById('screen-home').classList.add('active');updateStats();}
+function buildTable(tid,key){const data=custs[key]||[];while(data.length<15)data.push({name:'',phone:'',unit:'',budget:''});document.getElementById(tid).innerHTML=`<thead><tr><th class="rn">#</th><th>نام</th><th>شماره تلفن</th><th>نوع واحد</th><th>بودجه</th></tr></thead><tbody>${data.slice(0,15).map((r,i)=>`<tr><td class="rn">${i+1}</td><td><input value="${r.name||''}" onchange="updC('${key}',${i},'name',this.value)" placeholder="نام"></td><td><input value="${r.phone||''}" onchange="updC('${key}',${i},'phone',this.value)" placeholder="09..."></td><td><input value="${r.unit||''}" onchange="updC('${key}',${i},'unit',this.value)" placeholder="نوع"></td><td><input value="${r.budget||''}" onchange="updC('${key}',${i},'budget',this.value)" placeholder="بودجه"></td></tr>`).join('')}</tbody>`;}
+function updC(k,i,f,v){if(!custs[k])custs[k]=[];while(custs[k].length<=i)custs[k].push({});custs[k][i][f]=v;}
+function saveCustomers(){localStorage.setItem('hf_c',JSON.stringify(custs));showToast('مشتریان ذخیره شدند ✅');}
+function renderCusts(){buildTable('t70','r70');buildTable('t120','r120');buildTable('t130','r130');}
+function renderHist(){const c=document.getElementById('hcontent');if(!hist.length){c.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><h3>تاریخچه‌ای وجود ندارد</h3><p>فایل‌های حذف‌شده اینجا نمایش داده می‌شوند</p></div>`;return;}c.innerHTML=hist.map(h=>`<div class="hi${h.isSold?' sold':''}"><div class="htop"><span class="hcode">${h.code}${h.type?' · '+h.type:''}</span><span class="hdate">${h.deletedAt}</span></div><div class="haddr">📍 ${h.address}</div>${h.price?`<div class="hreason">قیمت: <strong>${h.price}</strong></div>`:''}<div class="hreason" style="margin-top:4px">دلیل: <strong>${h.reason}</strong>${h.note?' — '+h.note:''}</div></div>`).join('');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+updateStats();renderPG();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
